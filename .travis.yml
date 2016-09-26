@@ -3,6 +3,11 @@ language: cpp
 sudo: required
 dist: trusty
 
+python:
+  - "3.2"
+  - "3.3"
+  - "3.4"
+
 addons:
   apt:
     sources:
@@ -19,6 +24,4 @@ compiler:
 
 script:
   - mkdir build && cd build
-  - cmake ..
-  - make
-  - ./test/xdata_array_test
+  - cmake .. && make && ./test/xdata_array_test
