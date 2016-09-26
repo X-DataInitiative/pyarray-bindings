@@ -16,8 +16,8 @@ addons:
     #- llvm-toolchain-precise-3.6
     packages:
     - swig
-    - python-dev
-    - python-numpy
+    - python3-dev
+    - python3-numpy
     - libgtest-dev
 
 compiler:
@@ -28,6 +28,5 @@ before_script:
   - "cd /usr/src/gtest && sudo cmake . && sudo cmake --build . && sudo mv libg* /usr/local/lib/ ; cd -"
 
 script:
-  - travis_debug
   - mkdir build && cd build
   - cmake .. -DPYTHON_NUMPY_INCLUDE_DIR=/usr/lib/python3/dist-packages/numpy/core/include && make && ./test/xdata_array_test
