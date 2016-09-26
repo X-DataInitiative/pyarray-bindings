@@ -1,6 +1,5 @@
-
+#define NO_IMPORT_ARRAY
 #include "interface.hpp"
-
 
 long example_array_long(xdata::ArrayLong & arr)
 {

@@ -14,4 +14,4 @@ SET_SOURCE_FILES_PROPERTIES(typemap.i PROPERTIES SWIG_FLAGS "-includeall")
 SWIG_ADD_MODULE(xdata_array_test python typemap.i interface.cpp)
 SWIG_LINK_LIBRARIES(xdata_array_test ${PYTHON_LIBRARIES} xdata_array)
 
-target_compile_definitions(_xdata_array_test PUBLIC NPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION NO_IMPORT_ARRAY PY_ARRAY_UNIQUE_SYMBOL=XDATA_PYARRAY_API)
+target_compile_definitions(_xdata_array_test PUBLIC NPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION NO_IMPORT_ARRAY)

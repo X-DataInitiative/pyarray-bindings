@@ -1,5 +1,3 @@
-#define NO_IMPORT_ARRAY
-
 #include <fstream>
 #include <gtest/gtest.h>
 
@@ -228,9 +226,6 @@ TEST(TypedArrayTest, SparseDot) {
 
     EXPECT_NE(0, arrayDouble.Dot(arrayDoubleSparse));
 }
-
-#include <cmath>
-#include <boost/timer/timer.hpp>
 
 TEST(TypedArrayTest, DenseIndexing) {
     xdata::ArrayDouble arrayDouble{10, 10, 10};
