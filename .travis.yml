@@ -15,14 +15,19 @@ addons:
     #- ubuntu-toolchain-r-test
     #- llvm-toolchain-precise-3.6
     packages:
+    - swig
     - python-dev
     - python-numpy
+    - libgtest-dev
 
 compiler:
   - clang
   - gcc
+  
+before_script:
+  - "cd /usr/src/gtest && sudo cmake . && sudo cmake --build . && sudo mv libg* /usr/local/lib/ ; cd -"
 
 script:
   - travis_debug
   - mkdir build && cd build
-  - cmake .. && make && ./test/xdata_array_test
+  - cmake .. -DPYTHON_NUMPY_INCLUDE_DIR=/usr/lib/python3/dist-packages/numpy/core/include && make && ./test/xdata_array_test
