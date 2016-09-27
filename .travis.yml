@@ -20,6 +20,5 @@ before_script:
   - "cd /usr/src/gtest && sudo cmake . && sudo cmake --build . && sudo mv libg* /usr/local/lib/ ; cd -"
 
 script:
-  - mkdir build && cd build
   - sh ../.travis_build.sh
   - travis_debug
