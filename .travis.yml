@@ -1,13 +1,5 @@
 language: cpp
 
-sudo: required
-dist: trusty
-
-python:
-  - "3.2"
-  - "3.3"
-  - "3.4"
-
 addons:
   apt:
     sources:
@@ -28,6 +20,6 @@ before_script:
   - "cd /usr/src/gtest && sudo cmake . && sudo cmake --build . && sudo mv libg* /usr/local/lib/ ; cd -"
 
 script:
-  - travis_debug
   - mkdir build && cd build
-  - cmake .. -DPYTHON_NUMPY_INCLUDE_DIR=/usr/lib/python3/dist-packages/numpy/core/include && make && ./test/xdata_array_test
+  - cmake .. -DPYTHON_NUMPY_INCLUDE_DIR=/usr/lib/python3/dist-packages/numpy/core/include -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.4m.so -DPYTHON_INCLUDE_DIR=/usr/include/python3.4m && make && ./test/xdata_array_test
+  - travis_debug
