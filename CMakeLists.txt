@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.2)
-project(xdata_array)
+cmake_minimum_required(VERSION 2.8)
+project(tick_array)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/CMake/Modules)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
@@ -13,31 +13,30 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PYTHON_NUMPY_INCLUDE_DIR})
 include_directories(${PYTHON_INCLUDE_PATH})
 
-set(XDATA_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src/xdata)
-set(XDATA_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include/xdata)
+set(TICK_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src/tick)
+set(TICK_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include/tick)
 
-set(XDATA_SOURCE_FILES
-        ${XDATA_SOURCE_DIR}/array/PyRef.cpp
-        ${XDATA_SOURCE_DIR}/array/TypedArray.cpp
-        ${XDATA_SOURCE_DIR}/array/PyArray.cpp)
+set(TICK_SOURCE_FILES
+        ${TICK_SOURCE_DIR}/array/PyRef.cpp)
 
-set(XDATA_INCLUDE_FILES
-        ${XDATA_INCLUDE_DIR}/array/Fwd.hpp
-        ${XDATA_INCLUDE_DIR}/array/TypeTraits.hpp
-        ${XDATA_INCLUDE_DIR}/array/PyRef.hpp
-        ${XDATA_INCLUDE_DIR}/array/PyScalar.tpp
-        ${XDATA_INCLUDE_DIR}/array/PyScalar.hpp
-        ${XDATA_INCLUDE_DIR}/array/PyArray.hpp
-        ${XDATA_INCLUDE_DIR}/array/PyArray.tpp
-        ${XDATA_INCLUDE_DIR}/array/ArrayLike.hpp
-        ${XDATA_INCLUDE_DIR}/array/TypedArray.hpp
-        ${XDATA_INCLUDE_DIR}/array/TypedArray.tpp
+set(TICK_INCLUDE_FILES
+        ${TICK_INCLUDE_DIR}/array/Fwd.hpp
+        ${TICK_INCLUDE_DIR}/array/TypeTraits.hpp
+        ${TICK_INCLUDE_DIR}/array/PyRef.hpp
+        ${TICK_INCLUDE_DIR}/array/PyScalar.tpp
+        ${TICK_INCLUDE_DIR}/array/PyScalar.hpp
+        ${TICK_INCLUDE_DIR}/array/PyArray.hpp
+        ${TICK_INCLUDE_DIR}/array/PyArray.tpp
+        ${TICK_INCLUDE_DIR}/array/ArrayLike.hpp
+        ${TICK_INCLUDE_DIR}/array/TypedArray.hpp
+        ${TICK_INCLUDE_DIR}/array/TypedArray.tpp
         )
 
-add_library(xdata_array ${XDATA_SOURCE_FILES} ${XDATA_INCLUDE_FILES})
+add_library(tick_array ${TICK_SOURCE_FILES} ${TICK_INCLUDE_FILES})
 
-target_compile_definitions(xdata_array PUBLIC NPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION PY_ARRAY_UNIQUE_SYMBOL=XDATA_PYARRAY_API)
-target_link_libraries(xdata_array ${PYTHON_LIBRARIES} ${BLAS_LIBRARIES} ${Boost_LIBRARIES})
+set_property(TARGET tick_array PROPERTY POSITION_INDEPENDENT_CODE ON)
+target_compile_definitions(tick_array PUBLIC NPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION PY_ARRAY_UNIQUE_SYMBOL=TICK_PYARRAY_API)
+target_link_libraries(tick_array ${PYTHON_LIBRARIES} ${Boost_LIBRARIES} -lpthread -lm)
 
 if (${BLAS_FOUND})
     message(STATUS "BLAS found, libraries: ${BLAS_LIBRARIES}")

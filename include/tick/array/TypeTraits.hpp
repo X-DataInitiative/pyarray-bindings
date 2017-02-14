@@ -3,7 +3,7 @@
 #include <type_traits>
 #include <numpy/ndarraytypes.h>
 
-namespace xdata {
+namespace tick {
 namespace detail {
 
 template <typename T>

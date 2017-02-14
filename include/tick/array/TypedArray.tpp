@@ -1,12 +1,17 @@
 #pragma once
 
+#include <cstring>
+
+#include <algorithm>
+
 #include <Python.h>
+
 #include <numpy/arrayobject.h>
 
-#include <xdata/array/PyScalar.hpp>
-#include <xdata/array/TypedArray.hpp>
+#include <tick/array/PyScalar.hpp>
+#include <tick/array/TypedArray.hpp>
 
-namespace xdata {
+namespace tick {
 
 template <typename T, typename S, unsigned long N>
 struct InitializeData {};
@@ -79,28 +84,28 @@ template <typename T, typename S>
 typename TypedArray<T, S>::CType TypedArray<T, S>::Sum() const {
     PyScalar<T> s{PyArray_Sum(Values().PyArrayObj(), NPY_MAXDIMS, Traits::NpType, nullptr)};
 
-    return s.Value();
+    return s.value();
 }
 
 template <typename T, typename S>
 double TypedArray<T, S>::Mean() const {
     PyScalar<double> s{PyArray_Mean(data.values.PyArrayObj(), NPY_MAXDIMS, Traits::NpType, nullptr)};
 
-    return s.Value();
+    return s.value();
 }
 
 template <typename T, typename S>
 typename TypedArray<T, S>::CType TypedArray<T, S>::Min() const {
     PyScalar<CType> s{PyArray_Min(data.values.PyArrayObj(), NPY_MAXDIMS, nullptr)};
 
-    return s.Value();
+    return s.value();
 }
 
 template <typename T, typename S>
 typename TypedArray<T, S>::CType TypedArray<T, S>::Max() const {
     PyScalar<CType> s{PyArray_Max(data.values.PyArrayObj(), NPY_MAXDIMS, nullptr)};
 
-    return s.Value();
+    return s.value();
 }
 
 template <typename T, typename S>

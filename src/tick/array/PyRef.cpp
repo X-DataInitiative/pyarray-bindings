@@ -5,9 +5,9 @@
 #include <Python.h>
 #include <numpy/arrayobject.h>
 
-#include <xdata/array/PyRef.hpp>
+#include <tick/array/PyRef.hpp>
 
-namespace xdata {
+namespace tick {
 
 #if PY_VERSION_HEX >= 0x03000000
 int InitNumpy_() { import_array(); return 0; }
@@ -27,17 +27,17 @@ PyRef::PyRef()
 //    *pyObj = nullptr;
 //}
 
-PyRef::PyRef(PyObject *&&pyObj)
-    : pyObj(pyObj)
+PyRef::PyRef(PyObject*&& obj)
+    : pyObj(obj)
 {
     if (pyObj == nullptr)
         throw std::runtime_error("PyRef initialized with null-pointer!");
+
+    obj = nullptr;
 }
 
 PyRef::PyRef(const PyRef &other)
-    : pyObj(other.pyObj)
-
-{
+    : pyObj(other.pyObj) {
     Py_XINCREF(pyObj);
 }
 
@@ -98,5 +98,7 @@ std::size_t PyRef::RefCount() const {
     else
         return std::size_t{};
 }
+
+
 
 }

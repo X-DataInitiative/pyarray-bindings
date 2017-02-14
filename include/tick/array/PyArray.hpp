@@ -3,12 +3,15 @@
 #include <iostream>
 #include <array>
 
-#include <xdata/array/PyRef.hpp>
-#include <xdata/array/TypeTraits.hpp>
+#include <Python.h>
+
+#include <tick/array/PyRef.hpp>
+#include <tick/array/TypeTraits.hpp>
+
 #include <numpy/npy_common.h>
 #include <numpy/ndarraytypes.h>
 
-namespace xdata {
+namespace tick {
 
 using DimensionsType =  std::array<npy_intp, 3>;
 
@@ -19,7 +22,7 @@ public:
     using CType = typename Traits::CType;
 
     PyArray();
-    PyArray(PyRef&& ref);
+    explicit PyArray(PyRef&& ref);
 
     PyArray(const PyArray& other);
     PyArray(PyArray&& other);
@@ -39,13 +42,13 @@ public:
 
     bool IsWellFormed() const;
 
-    CType& operator()(npy_intp idx1);
-    CType& operator()(npy_intp idx1, npy_intp idx2);
-    CType& operator()(npy_intp idx1, npy_intp idx2, npy_intp idx3);
-
-    const CType& operator()(npy_intp idx1) const;
-    const CType& operator()(npy_intp idx1, npy_intp idx2) const;
-    const CType& operator()(npy_intp idx1, npy_intp idx2, npy_intp idx3) const;
+//    CType& operator()(npy_intp idx1);
+//    CType& operator()(npy_intp idx1, npy_intp idx2);
+//    CType& operator()(npy_intp idx1, npy_intp idx2, npy_intp idx3);
+//
+//    const CType& operator()(npy_intp idx1) const;
+//    const CType& operator()(npy_intp idx1, npy_intp idx2) const;
+//    const CType& operator()(npy_intp idx1, npy_intp idx2, npy_intp idx3) const;
 
 //    PyArray Transposed() const;
 //    PyArray Flattened() const;
@@ -59,4 +62,4 @@ private:
 
 }
 
-#include <xdata/array/PyArray.tpp>
+#include <tick/array/PyArray.tpp>

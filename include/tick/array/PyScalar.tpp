@@ -1,8 +1,12 @@
 #pragma once
 
-#include <xdata/array/PyScalar.hpp>
+#include <Python.h>
+#include <numpy/arrayobject.h>
+#include <numpy/arrayscalars.h>
 
-namespace xdata {
+#include <tick/array/PyScalar.hpp>
+
+namespace tick {
 
 namespace detail {
 
@@ -13,7 +17,13 @@ struct PyObjectFromValue {
 
 template <>
 struct PyObjectFromValue<double> {
-    PyObject* operator()(const double& value) { return PyFloat_FromDouble(value); }
+    PyObject* operator()(const double& value) {
+        PyObject* const ptr = PyArray_SimpleNew(0, nullptr, NpTypeTraits<double>::NpType);
+
+        *reinterpret_cast<double*>(PyArray_DATA(reinterpret_cast<PyArrayObject*>(ptr))) = value;
+
+        return ptr;
+    }
 };
 
 template <>
@@ -31,45 +41,41 @@ struct PyObjectFromValue<bool> {
     PyObject* operator()(const bool& value) { return PyLong_FromLong(value);; }
 };
 
+}  // namespace detail
+
+template <typename T>
+PyScalar<T>::PyScalar()
+    : Base(std::array<std::size_t, 0>{}) {
 }
 
 template <typename T>
 PyScalar<T>::PyScalar(PyObject *&&pyObj)
-    : value(std::move(pyObj))
+    : Base(std::array<std::size_t, 0>{})
 {
-    if (!PyArray_CheckAnyScalar(PyObj()))
+    if (!PyArray_CheckScalar(Base::PyArrayObj()))
         throw std::runtime_error("Object is not a scalar type!");
 }
 
 template <typename T>
 PyScalar<T>::PyScalar(const CType & val)
-    : value(detail::PyObjectFromValue<CType>{}(val))
-{
+    : Base(std::array<std::size_t, 0>{}) {
+    value() = val;
 }
 
 template <typename T>
 PyScalar<T>::~PyScalar()
-{
+{}
+
+template <typename T>
+typename PyScalar<T>::CType& PyScalar<T>::value() {
+    return Base::at(0);
 }
 
 template <typename T>
-typename PyScalar<T>::CType PyScalar<T>::Value()
-{
-    if (PyArray_Check(PyObj())) {
-        return (reinterpret_cast<CType*>(PyArray_DATA(reinterpret_cast<PyArrayObject*>(PyObj()))))[0];
-    } else {
-        CType out{};
-
-        PyArray_ScalarAsCtype(PyObj(), &out);
-
-        return out;
-    }
+typename PyScalar<T>::CType& PyScalar<T>::operator()() {
+    return value();
 }
 
-template <typename T>
-PyObject* PyScalar<T>::PyObj() const
-{
-    return value.PyObj();
-}
 
-} // xdata
+
+}  // namespace xdata

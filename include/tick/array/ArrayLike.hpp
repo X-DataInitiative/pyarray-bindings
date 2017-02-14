@@ -3,7 +3,7 @@
 #include <tuple>
 #include <vector>
 
-namespace xdata {
+namespace tick {
 
 template <typename T>
 struct ArrayLike {

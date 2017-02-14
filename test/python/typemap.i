@@ -1,20 +1,25 @@
 
-%typemap(in) xdata::ArrayLong & (xdata::ArrayLong temp) {
+%typemap(in) tick::ArrayDouble & (tick::ArrayDouble temp) {
     Py_XINCREF($input);
 
-    temp = xdata::ArrayLong{std::move($input)};
+    temp = tick::ArrayDouble{tick::PyRef{std::move($input)}};
+
+    // PyRef::From(PyObject*&);
+    // Inc, set to null;
+
+    $input = nullptr;
 
     $1 = &temp;
 }
 
 %init %{
-    xdata::PyRef::Init();
+    tick::PyRef::Init();
 %}
 
-%module xdata_array_test
+%module tick_array_mod
 %{
 
-#include <xdata/array/TypedArray.hpp>
+#include <tick/array/PyNdArray.hpp>
 #include "interface.hpp"
 
 %}

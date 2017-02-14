@@ -1,13 +1,24 @@
 #define NO_IMPORT_ARRAY
 #include "interface.hpp"
 
-long example_array_long(xdata::ArrayLong & arr)
+long example_array_long(tick::ArrayDouble & arr)
 {
     arr.Fill(42);
 
     return arr.Sum();
 }
 
-long example_array_dot(xdata::ArrayLong &arr, const xdata::ArrayLong &arr2) {
-    return arr.Dot(arr2);
+long example_array_dot(tick::ArrayDouble &arr, const tick::ArrayDouble &arr2) {
+    arr.Fill(4.0);
+
+    return 5;
+    //return arr.Dot(arr2);
+}
+
+extern tick::ArrayDouble example_array_return() {
+    tick::ArrayDouble arr(142);
+
+    arr.Fill(4);
+
+    return arr;
 }

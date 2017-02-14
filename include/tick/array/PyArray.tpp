@@ -1,10 +1,10 @@
 #pragma once
 
-#include <xdata/array/PyArray.hpp>
+#include <tick/array/PyArray.hpp>
 
 #include <numpy/arrayobject.h>
 
-namespace xdata {
+namespace tick {
 
 template <typename T>
 PyArray<T>::PyArray() {
@@ -87,41 +87,41 @@ bool PyArray<T>::IsWellFormed() const {
     return PyArray_ISCARRAY_RO(PyArrayObj());
 }
 
-template <typename T>
-typename PyArray<T>::CType& PyArray<T>::operator()(npy_intp idx1)
-{
-    return *(reinterpret_cast<T*>(PyArray_GETPTR1(PyArrayObj(), idx1)));
-}
-
-template <typename T>
-typename PyArray<T>::CType& PyArray<T>::operator()(npy_intp idx1, npy_intp idx2)
-{
-    return *(reinterpret_cast<T*>(PyArray_GETPTR2(PyArrayObj(), idx1, idx2)));
-}
-
-template <typename T>
-typename PyArray<T>::CType& PyArray<T>::operator()(npy_intp idx1, npy_intp idx2, npy_intp idx3)
-{
-    return *(reinterpret_cast<CType*>(PyArray_GETPTR3(PyArrayObj(), idx1, idx2, idx3)));
-}
-
-template <typename T>
-const typename PyArray<T>::CType& PyArray<T>::operator()(npy_intp idx1) const
-{
-    return *(reinterpret_cast<CType*>(PyArray_GETPTR1(PyArrayObj(), idx1)));
-}
-
-template <typename T>
-const typename PyArray<T>::CType& PyArray<T>::operator()(npy_intp idx1, npy_intp idx2) const
-{
-    return *(reinterpret_cast<CType*>(PyArray_GETPTR2(PyArrayObj(), idx1, idx2)));
-}
-
-template <typename T>
-const typename PyArray<T>::CType& PyArray<T>::operator()(npy_intp idx1, npy_intp idx2, npy_intp idx3) const
-{
-    return *(reinterpret_cast<CType*>(PyArray_GETPTR3(PyArrayObj(), idx1, idx2, idx3)));
-}
+//template <typename T>
+//typename PyArray<T>::CType& PyArray<T>::operator()(npy_intp idx1)
+//{
+//    return *(reinterpret_cast<T*>(PyArray_GETPTR1(PyArrayObj(), idx1)));
+//}
+//
+//template <typename T>
+//typename PyArray<T>::CType& PyArray<T>::operator()(npy_intp idx1, npy_intp idx2)
+//{
+//    return *(reinterpret_cast<T*>(PyArray_GETPTR2(PyArrayObj(), idx1, idx2)));
+//}
+//
+//template <typename T>
+//typename PyArray<T>::CType& PyArray<T>::operator()(npy_intp idx1, npy_intp idx2, npy_intp idx3)
+//{
+//    return *(reinterpret_cast<CType*>(PyArray_GETPTR3(PyArrayObj(), idx1, idx2, idx3)));
+//}
+//
+//template <typename T>
+//const typename PyArray<T>::CType& PyArray<T>::operator()(npy_intp idx1) const
+//{
+//    return *(reinterpret_cast<CType*>(PyArray_GETPTR1(PyArrayObj(), idx1)));
+//}
+//
+//template <typename T>
+//const typename PyArray<T>::CType& PyArray<T>::operator()(npy_intp idx1, npy_intp idx2) const
+//{
+//    return *(reinterpret_cast<CType*>(PyArray_GETPTR2(PyArrayObj(), idx1, idx2)));
+//}
+//
+//template <typename T>
+//const typename PyArray<T>::CType& PyArray<T>::operator()(npy_intp idx1, npy_intp idx2, npy_intp idx3) const
+//{
+//    return *(reinterpret_cast<CType*>(PyArray_GETPTR3(PyArrayObj(), idx1, idx2, idx3)));
+//}
 
 template <typename T>
 PyArray<T>::PyArray(const PyArray<T> &other)

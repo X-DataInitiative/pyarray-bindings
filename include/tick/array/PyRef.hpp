@@ -4,16 +4,16 @@
 #include <string>
 #include <array>
 
-#include <xdata/array/Fwd.hpp>
+#include <tick/array/Fwd.hpp>
 
-namespace xdata {
+namespace tick {
 
 class PyRef {
 
 public:
     PyRef();
-    PyRef(PyObject*&& pyObj);
-    //explicit PyRef(PyObject **pyObj);
+
+    explicit PyRef(PyObject*&& obj);
 
     PyRef(const PyRef& other);
     PyRef(PyRef&& other);

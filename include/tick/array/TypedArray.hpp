@@ -2,9 +2,9 @@
 
 #include <functional>
 #include <iostream>
-#include <xdata/array/PyArray.hpp>
+#include <tick/array/PyArray.hpp>
 
-namespace xdata {
+namespace tick {
 
 struct FileLoadOptions {
     std::string sep = " ";
