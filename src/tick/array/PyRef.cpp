@@ -56,8 +56,7 @@ PyRef& PyRef::operator=(const PyRef &other)
     return *this;
 }
 
-PyRef& PyRef::operator=(PyRef &&other)
-{
+PyRef& PyRef::operator=(PyRef &&other) {
     this->pyObj = other.pyObj;
 
     other.pyObj = nullptr;
@@ -99,6 +98,15 @@ std::size_t PyRef::RefCount() const {
         return std::size_t{};
 }
 
+PyRef PyRef::Take(PyObject *&obj) {
+    Py_XINCREF(obj);
+
+    PyRef ref{std::move(obj)};
+
+    obj = nullptr;
+
+    return ref;
+}
 
 
 }

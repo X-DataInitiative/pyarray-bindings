@@ -16,9 +16,9 @@ long example_array_dot(tick::ArrayDouble &arr, const tick::ArrayDouble &arr2) {
 }
 
 extern tick::ArrayDouble example_array_return() {
-    tick::ArrayDouble arr(142);
+    tick::ArrayDouble arr(10);
 
-    arr.Fill(4);
+    arr.Fill(4.42);
 
     return arr;
 }

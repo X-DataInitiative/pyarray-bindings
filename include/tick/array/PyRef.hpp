@@ -32,6 +32,8 @@ public:
 
     std::size_t RefCount() const;
 
+    static PyRef Take(PyObject*& obj);
+
     static void Init();
 
 private:

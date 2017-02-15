@@ -65,14 +65,18 @@ public:
         return PyArray_SIZE(PyArrayObj());
     }
 
-    constexpr unsigned GetNDimensions() { return Ndim; }
+    constexpr unsigned GetNDimensions() const { return Ndim; }
 
-    PyArrayObject* PyArrayObj() const {
-        return reinterpret_cast<PyArrayObject *>(PyObj());
+    PyRef& GetPyRef() {
+        return value;
     }
 
-    PyObject* PyObj() const {
-        return value.PyObj();
+    const PyRef& GetPyRef() const {
+        return value;
+    }
+
+    PyArrayObject* PyArrayObj() const {
+        return reinterpret_cast<PyArrayObject *>(GetPyRef().PyObj());
     }
 
     void Fill(CType value) {
