@@ -162,8 +162,7 @@ T Dot_(const TypedArray<T, array_storage::SparseCRS<T>>& a, const TypedArray<T, 
 }
 
 template <typename T>
-T Dot_(const TypedArray<T, array_storage::Dense<T>>& a, const TypedArray<T, array_storage::Dense<T>>& b)
-{
+T Dot_(const TypedArray<T, array_storage::Dense<T>>& a, const TypedArray<T, array_storage::Dense<T>>& b) {
     PyScalar<typename detail::NpTypeTraits<T>::CType> s{PyArray_InnerProduct(a.Values().PyObj(), b.Values().PyObj())};
 
     return s.Value();

@@ -26,15 +26,42 @@ public:
     }
 
     explicit NdArray(std::array<std::size_t, Ndim> dims)
-        : value(PyArray_SimpleNew(dims.size(), reinterpret_cast<npy_intp*>(dims.data()), Traits::NpType))
-    {}
+        : value(PyArray_SimpleNew(dims.size(), reinterpret_cast<npy_intp*>(dims.data()), Traits::NpType)) {
+
+    }
+
+    NdArray(const NdArray& other)
+        : value(PyArray_SimpleNew(other.GetNDimensions(), reinterpret_cast<npy_intp*>(other.Dimensions().data()), Traits::NpType)) {
+
+    }
+
+    NdArray(NdArray&& other)
+        : value(std::move(other.value)) {
+
+    }
+
+    NdArray& operator=(const NdArray& other) {
+        value = PyArray_SimpleNew(other.GetNDimensions(), reinterpret_cast<npy_intp*>(other.Dimensions().data()), Traits::NpType);
+
+        return *this;
+    }
+
+    NdArray& operator=(NdArray&& other) {
+        value = std::move(other.value);
+
+        return *this;
+    }
+
+    T* Data() {
+        return reinterpret_cast<CType *>(PyArray_DATA(PyArrayObj()));
+    }
 
     T& at(std::size_t i) {
-        return *(reinterpret_cast<CType *>(PyArray_DATA(PyArrayObj())) + i);
+        return *(Data() + i);
     }
 
     const T& at(std::size_t i) const {
-        return *(reinterpret_cast<CType *>(PyArray_DATA(PyArrayObj())) + i);
+        return *(Data() + i);
     }
 
     T& operator[](std::size_t i) {
@@ -64,6 +91,15 @@ public:
     std::size_t Size() const {
         return PyArray_SIZE(PyArrayObj());
     }
+
+    std::array<std::size_t, Ndim> Dimensions() const {
+        std::array<std::size_t, Ndim> res;
+        npy_intp* dims = PyArray_DIMS(PyArrayObj());
+
+        for (std::size_t i = 0; i < res.size(); ++i) res[i] = dims[i];
+
+        return res;
+    };
 
     constexpr unsigned GetNDimensions() const { return Ndim; }
 
@@ -98,12 +134,12 @@ public:
         return result;
     }
 
-    CType Mean() const {
-        PyRef sum{PyArray_Mean(PyArrayObj(), NPY_MAXDIMS, Traits::NpType, nullptr)};
+    double Mean() const {
+        PyRef mean{PyArray_Mean(PyArrayObj(), NPY_MAXDIMS, Traits::NpType, nullptr)};
 
-        CType result;
+        double result;
 
-        PyArray_ScalarAsCtype(sum.PyObj(), &result);
+        PyArray_ScalarAsCtype(mean.PyObj(), &result);
 
         return result;
     }
@@ -112,29 +148,7 @@ private:
     PyRef value;
 };
 
-template <typename T>
-class Array : public NdArray<T, 1> {
-public:
-    using Base = NdArray<T, 1>;
 
-    Array()
-        : Base(std::array<std::size_t, 1>{0}) {
-    }
-
-    explicit Array(std::size_t size)
-            : Base(std::array<std::size_t, 1>{size}) {
-    }
-
-    explicit Array(PyRef&& other)
-        : Base(std::move(other))
-    {}
-
-    T& operator()(std::size_t i) { return Base::pyArray.at(i); }
-
-//    static Array<T> Zeros()
-};
-
-using ArrayDouble = Array<double>;
 
 //template <typename T>
 //class Array2D : public Ndarray<T, 2> {

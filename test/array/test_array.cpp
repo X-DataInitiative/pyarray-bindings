@@ -4,8 +4,9 @@
 #include <numpy/npy_3kcompat.h>
 
 #include <tick/array/PyRef.hpp>
-#include <tick/array/PyNdArray.hpp>
 #include <tick/array/PyScalar.hpp>
+#include <tick/array/PyArray.hpp>
+#include <tick/array/PyArray2d.hpp>
 
 TEST(PyRef, Constructor) {
     EXPECT_ANY_THROW(tick::PyRef{[]{ return nullptr; }()});
@@ -77,12 +78,23 @@ TEST(PyArray, First) {
 }
 
 TEST(PyArray, Fill) {
-    tick::Array<double> arr(100);
+    {
+        tick::Array<double> arr(100);
 
-    arr.Fill(1234.5678);
+        arr.Fill(1234.5678);
 
-    EXPECT_DOUBLE_EQ(arr.Mean(), 1234.5678);
-    EXPECT_DOUBLE_EQ(arr.Sum(), 1234.5678 * 100);
+        EXPECT_DOUBLE_EQ(arr.Mean(), 1234.5678);
+        EXPECT_DOUBLE_EQ(arr.Sum(), 1234.5678 * 100);
+    }
+
+    {
+        tick::ArrayDouble arr(100);
+
+        arr.Fill(1337);
+
+        EXPECT_EQ(1337, arr.Data()[50]);
+    }
+
 }
 
 TEST(PyArray, Zero) {
@@ -94,25 +106,16 @@ TEST(PyArray, Zero) {
     EXPECT_DOUBLE_EQ(arr.Sum(), 1234.5678 * 100);
 }
 
+TEST(PyArray2D, Sizes) {
+    auto arr = tick::ArrayDouble2d{123, 234};
 
-//TEST(PyArray, RefConstructor) {
-//    EXPECT_ANY_THROW(xdata::PyArray<int>{nullptr});
-//    EXPECT_ANY_THROW(xdata::PyArray<int>{PyLong_FromLong(1337)});
-//
-//    npy_intp dims[1] = {0};
-//    EXPECT_NO_THROW(xdata::PyArray<int>{PyArray_SimpleNew(1, dims, NPY_LONG)});
-//}
-//
-//TEST(NpArrayTest, Sizes) {
-//    auto arr = xdata::TypedArray<double>{123, 234};
-//
-//    const auto dims = arr.Dimensions();
-//
-//    EXPECT_EQ(3, dims.size());
-//    EXPECT_EQ(123, dims[0]);
-//    EXPECT_EQ(234, dims[1]);
-//
-//}
+    const auto dims = arr.Dimensions();
+
+    EXPECT_EQ(2, dims.size());
+    EXPECT_EQ(123, dims[0]);
+    EXPECT_EQ(234, dims[1]);
+
+}
 
 //TEST(NpArrayTest, FromFile) {
 //    const std::string filename = "testarray.mat";
@@ -200,71 +203,73 @@ TEST(PyArray, Zero) {
 //    EXPECT_EQ(arr.Data(), flatArr.Data());
 //}
 
-//TEST(TypedArrayTest, Copy) {
-//    xdata::TypedArray<double> arr(100);
+TEST(PyArray, Copy) {
+    tick::ArrayDouble arr(100);
+
+    // should be copy
+    tick::ArrayDouble arr2 = arr;
+
+    EXPECT_NE(arr.Data(), arr2.Data());
+}
+
+TEST(PyArray, Move) {
+    tick::ArrayDouble arr(100);
+
+    double* olddataloc = arr.Data();
+
+    tick::ArrayDouble arr2 = std::move(arr);
+
+    EXPECT_EQ(nullptr, arr.GetPyRef().PyObj());
+    EXPECT_EQ(olddataloc, arr2.Data());
+}
+
+TEST(PyArray2D, Sum) {
+    tick::ArrayDouble2d arr(123, 234);
+
+    arr.Fill(2);
+
+    EXPECT_EQ(123 * 234 * 2, arr.Sum());
+}
+
+TEST(PyArray2D, Mean) {
+    {
+        tick::ArrayDouble2d arr(123, 234);
+
+        arr.Fill(2);
+
+        EXPECT_EQ(2.0, arr.Mean());
+    }
+
+    {
+        std::vector<long> vals = {47, 53, 80, 9, 33, 25, 11, 13, 52, 1, 78, 50, 54, 44, 64, 89, 32, 6, 99, 73, 75, 96, 57, 30, 61};
+
+        tick::ArrayLong arr2(vals.size());
+
+        std::copy(std::begin(vals), std::end(vals), arr2.Data());
+
+        EXPECT_EQ(1232, arr2.Sum());
+        EXPECT_EQ(49.28, arr2.Mean());
+    }
+}
 //
-//    // should be copy
-//    xdata::TypedArray<double> arr2 = arr;
-//
-//    EXPECT_NE(arr.Values().Data(), arr2.Values().Data());
-//}
-//
-//TEST(TypedArrayTest, Move) {
-//    xdata::TypedArray<double> arr(100);
-//
-//    double* olddataloc = arr.Values().Data();
-//
-//    xdata::TypedArray<double> arr2 = std::move(arr);
-//
-//    EXPECT_EQ(nullptr, arr.Values().PyObj());
-//    EXPECT_EQ(olddataloc, arr2.Values().Data());
-//}
-//
-//TEST(TypedArrayTest, Fill) {
-//    xdata::TypedArray<double> arr(100);
-//
-//    arr.Fill(1337);
-//
-//    EXPECT_EQ(1337, arr.Values().Data()[50]);
-//}
-//
-//TEST(TypedArrayTest, Sum) {
-//    xdata::TypedArray<double> arr(123, 234);
-//
-//    arr.Fill(2);
-//
-//    EXPECT_EQ(123 * 234 * 2, arr.Sum());
-//}
-//
-//TEST(TypedArrayTest, Mean) {
-//    xdata::TypedArray<double> arr(123, 234);
-//
-//    arr.Fill(2);
-//
-//    EXPECT_EQ(2.0, arr.Mean());
-//
-//    std::vector<long> vals = {47, 53, 80, 9, 33, 25, 11, 13, 52, 1, 78, 50, 54, 44, 64, 89, 32, 6, 99, 73, 75, 96, 57, 30, 61};
-//
-//    xdata::TypedArray<long> arr2(vals.size());
-//
-//    std::copy(std::begin(vals), std::end(vals), arr2.Values().Data());
-//
-//    EXPECT_EQ(1232, arr2.Sum());
-//    EXPECT_EQ(49.28, arr2.Mean());
-//}
-//
-//TEST(TypedArrayTest, Dot) {
-//    xdata::TypedArray<long> arr1(11);
-//    xdata::TypedArray<long> arr2(11);
-//
-//    arr1.Fill(1);
-//    arr2.Fill(2);
-//
-//    ASSERT_EQ(11 * 1, arr1.Sum());
-//    ASSERT_EQ(11 * 2, arr2.Sum());
-//
-//    EXPECT_EQ(22, arr1.Dot(arr2));
-//}
+TEST(PyArray, Dot) {
+    tick::ArrayLong arr1(11);
+    tick::ArrayLong arr2(11);
+
+    arr1.Fill(1);
+    arr2.Fill(2);
+
+    ASSERT_EQ(11 * 1, arr1.Sum());
+    ASSERT_EQ(11 * 2, arr2.Sum());
+
+    long prod = 0;
+    for (std::size_t i = 0; i < arr1.Size(); ++i) {
+        prod += arr1[i] * arr2[i];
+    }
+
+    EXPECT_EQ(prod, 22);
+    EXPECT_EQ(22, arr1.Dot(arr2));
+}
 //
 //TEST(TypedArrayTest, Generate) {
 //    xdata::TypedArray<long> arr1(10, 20, 30);

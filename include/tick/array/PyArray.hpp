@@ -7,59 +7,53 @@
 
 #include <tick/array/PyRef.hpp>
 #include <tick/array/TypeTraits.hpp>
+#include <tick/array/PyNdArray.hpp>
+#include <tick/array/PyScalar.hpp>
 
 #include <numpy/npy_common.h>
 #include <numpy/ndarraytypes.h>
 
 namespace tick {
 
-using DimensionsType =  std::array<npy_intp, 3>;
-
 template <typename T>
-class PyArray {
+class Array: public NdArray<T, 1> {
 public:
-    using Traits = typename detail::NpTypeTraits<T>;
-    using CType = typename Traits::CType;
+    using Base = NdArray<T, 1>;
+    using Traits = typename Base::Traits;
+    using CType = typename Base::CType;
 
-    PyArray();
-    explicit PyArray(PyRef&& ref);
+    Array()
+        : Base(std::array<std::size_t, 1>{0}) {
+    }
 
-    PyArray(const PyArray& other);
-    PyArray(PyArray&& other);
+    explicit Array(std::size_t size)
+            : Base(std::array<std::size_t, 1>{size}) {
+    }
 
-    PyArray& operator=(const PyArray& other);
-    PyArray& operator=(PyArray&& other);
+    explicit Array(PyRef&& other)
+            : Base(std::move(other)) {
+    }
 
-    PyArray(std::array<npy_intp, 1>);
-    PyArray(std::array<npy_intp, 2>);
-    PyArray(std::array<npy_intp, 3>);
+    CType & operator()(std::size_t i) {
+        return Base::at(i);
+    }
 
-    PyObject* PyObj() const;
-    PyArrayObject* PyArrayObj() const;
+    CType Dot(const Array<T>& other) {
+        PyScalar<CType> scalar{
+            PyRef{PyArray_InnerProduct(Base::GetPyRef().PyObj(), other.GetPyRef().PyObj())}
+        };
 
-    DimensionsType Dimensions() const;
-    int NDims() const;
-
-    bool IsWellFormed() const;
-
-//    CType& operator()(npy_intp idx1);
-//    CType& operator()(npy_intp idx1, npy_intp idx2);
-//    CType& operator()(npy_intp idx1, npy_intp idx2, npy_intp idx3);
-//
-//    const CType& operator()(npy_intp idx1) const;
-//    const CType& operator()(npy_intp idx1, npy_intp idx2) const;
-//    const CType& operator()(npy_intp idx1, npy_intp idx2, npy_intp idx3) const;
+        return scalar();
+    }
 
 //    PyArray Transposed() const;
 //    PyArray Flattened() const;
 //    PyArray FlattenedNoCopy() const;
-
-    CType* Data() const;
-
-private:
-    PyRef data;
 };
 
-}
+using ArrayDouble = Array<double>;
+using ArrayLong = Array<long>;
 
-#include <tick/array/PyArray.tpp>
+}  // namespace tick
+
+//#include <tick/array/PyArray.tpp>

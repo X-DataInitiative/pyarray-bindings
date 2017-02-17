@@ -49,12 +49,11 @@ PyScalar<T>::PyScalar()
 }
 
 template <typename T>
-PyScalar<T>::PyScalar(PyObject *&&pyObj)
-    : Base(std::array<std::size_t, 0>{})
-{
+PyScalar<T>::PyScalar(PyRef&& other)
+    : Base(std::move(other)) {
     if (!PyArray_CheckScalar(Base::PyArrayObj()))
         throw std::runtime_error("Object is not a scalar type!");
-}
+};
 
 template <typename T>
 PyScalar<T>::PyScalar(const CType & val)

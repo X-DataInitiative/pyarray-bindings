@@ -13,11 +13,11 @@ template <typename T>
 class PyScalar : public NdArray<T, 0> {
 public:
     using Base = NdArray<T, 0>;
-    using Traits = typename detail::NpTypeTraits<T>;
-    using CType = typename Traits::CType;
+    using Traits = typename Base::Traits;
+    using CType = typename Base::CType;
 
     PyScalar();
-    explicit PyScalar(PyObject*&& pyObj);
+    explicit PyScalar(PyRef&& other);
     explicit PyScalar(const CType& val);
 
     ~PyScalar();
